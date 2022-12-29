@@ -5,8 +5,9 @@ module Levenshtein
     extend FFI::Library
 
     # Try loading in order.
-    library = File.dirname(__FILE__) + "/../ext/levenshtein/levenshtein"
-    candidates = ['.bundle', '.so', '.dylib', ''].map { |ext| library + ext }
+    candidates = $LOAD_PATH.flat_map do |p|
+      ['.bundle', '.so', '.dylib', ''].map { |e| File.join(p, "levenshtein#{e}") }
+    end
     ffi_lib(candidates)
 
     # Safe version of distance, checks that arguments are really strings.
